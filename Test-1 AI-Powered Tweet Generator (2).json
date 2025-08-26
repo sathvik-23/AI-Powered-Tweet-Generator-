@@ -1,0 +1,271 @@
+{
+  "name": "Test-1 AI-Powered Tweet Generator",
+  "nodes": [
+    {
+      "parameters": {
+        "jsCode": "// Handle Perplexity output\nlet output = $json;\n\n// If the HTTP node gave an array\nif (Array.isArray(output)) {\n  output = output[0];\n}\n\nlet content = output?.choices?.[0]?.message?.content || \"\";\n\n// Remove ```json ... ``` wrappers\ncontent = content.replace(/```json|```/g, \"\").trim();\n\nlet tweets;\ntry {\n  tweets = JSON.parse(content);\n} catch (e) {\n  throw new Error(\"Failed to parse tweets JSON: \" + e.message + \"\\nContent: \" + content);\n}\n\nreturn tweets.map(t => ({\n  json: {\n    Name: t.substring(0, 50),         // First 50 chars for Name field\n    Tweet: t,                         // Full tweet\n    Status: \"Pending Review\",         // Review pipeline\n    Posted: \"Pending\",                // Default state before posting\n    Created_At: new Date().toISOString()\n  }\n}));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -20,
+        220
+      ],
+      "id": "20b8635b-0308-4844-9659-3c40f7c2f65f",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "app8KWjYXJHzgqoZ6",
+          "mode": "list",
+          "cachedResultName": "Tweet Review",
+          "cachedResultUrl": "https://airtable.com/app8KWjYXJHzgqoZ6"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblUQG3z7fjU2hFVa",
+          "mode": "list",
+          "cachedResultName": "Tweets",
+          "cachedResultUrl": "https://airtable.com/app8KWjYXJHzgqoZ6/tblUQG3z7fjU2hFVa"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "=Name → {{ $json.Tweet.slice(0, 50) }}\n",
+            "Tweet": "={{ $json.Tweet }}",
+            "Status": "={{ $json.Status }}",
+            "Created At": "={{ $json.Created_At.substring(0, 10) }}\n"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Tweet",
+              "displayName": "Tweet",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Pending Review",
+                  "value": "Pending Review"
+                },
+                {
+                  "name": "Approved",
+                  "value": "Approved"
+                },
+                {
+                  "name": "Rejected",
+                  "value": "Rejected"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Created At",
+              "displayName": "Created At",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Name (Auto)",
+              "displayName": "Name (Auto)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Tweet Length",
+              "displayName": "Tweet Length",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Day of Week",
+              "displayName": "Day of Week",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Sentiment Analysis",
+              "displayName": "Sentiment Analysis",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Tweet Summary",
+              "displayName": "Tweet Summary",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        280,
+        220
+      ],
+      "id": "3538aa23-9c82-4542-9fec-66770e96814e",
+      "name": "Create a record",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "kKaHO0DFCZ8XQtXJ",
+          "name": "Airtable Personal Access Token account- SVK"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "sonar",
+        "messages": {
+          "message": [
+            {
+              "content": "Search the latest AI and startup industry news (e.g. Y Combinator, OpenAI, Anthropic, DeepMind, AI startups, funding announcements, or product launches).\n\nGenerate EXACTLY a JSON array of 5 tweet-ready posts, each under 280 characters, based on real and current news. \n\nDo NOT include any links, sources, citations, or references in the text. \nOnly return the valid JSON array of 5 strings, nothing else.\n\nGenerate EXACTLY a JSON array of 5 tweet-ready posts, each under 280 characters, based on real and current news. \n\nTweets should be short, engaging, fact-based, and include a hashtag or source when relevant. \n\nReturn ONLY the valid JSON array of 5 strings, nothing else.\nReturn EXACTLY a JSON array of 5 strings, nothing else.\n"
+            }
+          ]
+        },
+        "options": {},
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.perplexity",
+      "typeVersion": 1,
+      "position": [
+        -300,
+        220
+      ],
+      "id": "71833982-a877-4854-a8f0-5c46077a3c8a",
+      "name": "Message a model1",
+      "credentials": {
+        "perplexityApi": {
+          "id": "PUqIyK7PPD9o6ALQ",
+          "name": "Perplexity account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -520,
+        220
+      ],
+      "id": "17c6e99d-0aa4-4d51-8ec8-b5180ef6e5de",
+      "name": "Schedule Trigger"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Create a record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model1": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Message a model1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "f154ac3d-39d9-453a-aa79-3123c991b1c3",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6ee993cee6cf8c24be49dcd6d355e98323531943b29f06234e9a857dddd78940"
+  },
+  "id": "6YDGIVdFkdScDkWT",
+  "tags": []
+}

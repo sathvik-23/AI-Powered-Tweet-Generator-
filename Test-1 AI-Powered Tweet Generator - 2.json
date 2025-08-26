@@ -1,0 +1,307 @@
+{
+  "name": "Test-1 AI-Powered Tweet Generator - 2",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "app8KWjYXJHzgqoZ6",
+          "mode": "list",
+          "cachedResultName": "Tweet Review",
+          "cachedResultUrl": "https://airtable.com/app8KWjYXJHzgqoZ6"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblUQG3z7fjU2hFVa",
+          "mode": "list",
+          "cachedResultName": "Tweets",
+          "cachedResultUrl": "https://airtable.com/app8KWjYXJHzgqoZ6/tblUQG3z7fjU2hFVa"
+        },
+        "filterByFormula": "AND({Status} = 'Approved', {Posted} = 'Pending')",
+        "returnAll": false,
+        "limit": 1,
+        "options": {},
+        "sort": {
+          "property": [
+            {
+              "field": "Created At"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        180,
+        -140
+      ],
+      "id": "7ff3ef23-3765-4d8d-a41f-258510bc2860",
+      "name": "Search records",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "kKaHO0DFCZ8XQtXJ",
+          "name": "Airtable Personal Access Token account- SVK"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.Tweet }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.twitter",
+      "typeVersion": 2,
+      "position": [
+        480,
+        -140
+      ],
+      "id": "02f9845b-1aee-4626-81a2-50537fd5ec41",
+      "name": "Create Tweet",
+      "credentials": {
+        "twitterOAuth2Api": {
+          "id": "N0dlOmwn2wc07mYa",
+          "name": "X account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "app8KWjYXJHzgqoZ6",
+          "mode": "list",
+          "cachedResultName": "Tweet Review",
+          "cachedResultUrl": "https://airtable.com/app8KWjYXJHzgqoZ6"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblUQG3z7fjU2hFVa",
+          "mode": "list",
+          "cachedResultName": "Tweets",
+          "cachedResultUrl": "https://airtable.com/app8KWjYXJHzgqoZ6/tblUQG3z7fjU2hFVa"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Search records').item.json.id }}",
+            "Posted": "Posted",
+            "Name": "={{ $('Search records').item.json.Name }}",
+            "Tweet": "={{ $('Search records').item.json.Tweet }}",
+            "Status": "={{ $('Search records').item.json.Status }}",
+            "Created At": "={{ $('Search records').item.json['Created At'] }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Tweet",
+              "displayName": "Tweet",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Pending Review",
+                  "value": "Pending Review"
+                },
+                {
+                  "name": "Approved",
+                  "value": "Approved"
+                },
+                {
+                  "name": "Rejected",
+                  "value": "Rejected"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Posted",
+              "displayName": "Posted",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Pending",
+                  "value": "Pending"
+                },
+                {
+                  "name": "Posted",
+                  "value": "Posted"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Created At",
+              "displayName": "Created At",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Name (Auto)",
+              "displayName": "Name (Auto)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Tweet Length",
+              "displayName": "Tweet Length",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Day of Week",
+              "displayName": "Day of Week",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        780,
+        -140
+      ],
+      "id": "425cadc3-7d7c-438f-802c-3bdec7402258",
+      "name": "Update record",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "kKaHO0DFCZ8XQtXJ",
+          "name": "Airtable Personal Access Token account- SVK"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -80,
+        -140
+      ],
+      "id": "ac64dfb4-4613-48e1-8580-ef0a2b7afdbe",
+      "name": "Schedule Trigger"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Search records": {
+      "main": [
+        [
+          {
+            "node": "Create Tweet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Tweet": {
+      "main": [
+        [
+          {
+            "node": "Update record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Search records",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "50a650d7-2605-4610-962e-583a77ed3097",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6ee993cee6cf8c24be49dcd6d355e98323531943b29f06234e9a857dddd78940"
+  },
+  "id": "VMoTmrt4QQlUiPZu",
+  "tags": []
+}
