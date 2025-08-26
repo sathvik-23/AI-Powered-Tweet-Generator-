@@ -192,4 +192,5 @@ MIT — use at your own risk; no warranties.
 
 ## 🙋 Support
 
-Create an issue on the repo or DM me on LinkedIn.
+Create an issue on the repo or DM me on LinkedIn:  
+[linkedin.com/in/sathvik-vk-b76090269](https://www.linkedin.com/in/sathvik-vk-b76090269/)
